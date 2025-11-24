@@ -96,6 +96,8 @@ class PortfolioRepository @Inject constructor(
     suspend fun getTradeByOrderId(orderId: String): TradeHistoryEntity? =
         tradeHistoryDao.getTradeByOrderId(orderId)
 
+    suspend fun clearAllTrades() = tradeHistoryDao.deleteAllTrades()
+
     // Rebalance Events
     suspend fun recordRebalanceEvent(event: RebalanceEventEntity): Long =
         rebalanceEventDao.insert(event)

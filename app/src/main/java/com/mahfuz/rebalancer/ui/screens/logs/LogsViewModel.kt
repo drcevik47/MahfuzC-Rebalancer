@@ -78,6 +78,12 @@ class LogsViewModel @Inject constructor(
         }
     }
 
+    fun clearTrades() {
+        viewModelScope.launch {
+            portfolioRepository.clearAllTrades()
+        }
+    }
+
     // Generate shareable text for logs
     fun generateLogsText(): String {
         val logs = _uiState.value.logs

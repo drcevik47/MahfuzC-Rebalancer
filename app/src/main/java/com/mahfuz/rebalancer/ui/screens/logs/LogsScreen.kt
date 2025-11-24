@@ -108,16 +108,30 @@ fun LogsScreen(
         }
     }
 
-    // Clear confirmation dialog
+    // Clear confirmation dialog - context aware based on selected tab
     if (showClearDialog) {
+        val isLogsTab = uiState.selectedTab == 0
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Logları Temizle") },
-            text = { Text("Tüm log kayıtları silinecek. Devam etmek istiyor musunuz?") },
+            title = {
+                Text(if (isLogsTab) "Logları Temizle" else "İşlemleri Temizle")
+            },
+            text = {
+                Text(
+                    if (isLogsTab)
+                        "Tüm log kayıtları silinecek. Devam etmek istiyor musunuz?"
+                    else
+                        "Tüm işlem kayıtları silinecek. Devam etmek istiyor musunuz?"
+                )
+            },
             confirmButton = {
                 Button(
                     onClick = {
-                        viewModel.clearLogs()
+                        if (isLogsTab) {
+                            viewModel.clearLogs()
+                        } else {
+                            viewModel.clearTrades()
+                        }
                         showClearDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = BybitRed)

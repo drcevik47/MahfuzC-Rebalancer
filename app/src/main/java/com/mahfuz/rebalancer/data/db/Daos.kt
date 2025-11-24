@@ -109,6 +109,9 @@ interface TradeHistoryDao {
 
     @Query("DELETE FROM trade_history WHERE timestamp < :before")
     suspend fun deleteOldTrades(before: Long): Int
+
+    @Query("DELETE FROM trade_history")
+    suspend fun deleteAllTrades()
 }
 
 @Dao
