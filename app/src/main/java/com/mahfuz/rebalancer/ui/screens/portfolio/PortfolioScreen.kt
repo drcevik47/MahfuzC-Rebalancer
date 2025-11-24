@@ -30,6 +30,21 @@ fun PortfolioScreen(
     var showAddCoinDialog by remember { mutableStateOf(false) }
     var showClearDialog by remember { mutableStateOf(false) }
 
+    // Calculate wallet percentages for display
+    val totalWalletValue = remember(uiState.walletCoins) {
+        uiState.walletCoins.sumOf { it.usdValue.toDoubleOrNull() ?: 0.0 }
+    }
+    val walletPercentages = remember(uiState.walletCoins, totalWalletValue) {
+        if (totalWalletValue > 0) {
+            uiState.walletCoins.associate { coin ->
+                val usdValue = coin.usdValue.toDoubleOrNull() ?: 0.0
+                coin.coin to (usdValue / totalWalletValue * 100)
+            }
+        } else {
+            emptyMap()
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -115,6 +130,7 @@ fun PortfolioScreen(
                 ) { coin ->
                     PortfolioCoinCard(
                         coin = coin,
+                        currentWalletPercentage = walletPercentages[coin.coin],
                         onPercentageChange = { viewModel.updateCoinPercentage(coin.coin, it) },
                         onActiveChange = { viewModel.setCoinActive(coin.coin, it) },
                         onRemove = { viewModel.removeCoin(coin.coin) }
@@ -341,6 +357,7 @@ fun TotalPercentageCard(
 @Composable
 fun PortfolioCoinCard(
     coin: PortfolioCoinEntity,
+    currentWalletPercentage: Double?,
     onPercentageChange: (Double) -> Unit,
     onActiveChange: (Boolean) -> Unit,
     onRemove: () -> Unit
@@ -353,68 +370,108 @@ fun PortfolioCoinCard(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp)
         ) {
-            // Active toggle
-            Checkbox(
-                checked = coin.isActive,
-                onCheckedChange = onActiveChange,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = BybitYellow
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Active toggle
+                Checkbox(
+                    checked = coin.isActive,
+                    onCheckedChange = onActiveChange,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = BybitYellow
+                    )
                 )
-            )
 
-            // Coin name
-            Text(
-                text = coin.coin,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(80.dp)
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Percentage
-            if (isEditing) {
-                OutlinedTextField(
-                    value = editValue,
-                    onValueChange = { editValue = it },
-                    modifier = Modifier.width(100.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true,
-                    suffix = { Text("%") },
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            editValue.toDoubleOrNull()?.let { onPercentageChange(it) }
-                            isEditing = false
-                        }) {
-                            Icon(Icons.Default.Check, contentDescription = "Onayla")
-                        }
-                    }
-                )
-            } else {
-                TextButton(onClick = {
-                    editValue = coin.targetPercentage.toString()
-                    isEditing = true
-                }) {
+                // Coin name and current wallet percentage
+                Column(modifier = Modifier.width(100.dp)) {
                     Text(
-                        text = "%.2f%%".format(coin.targetPercentage),
+                        text = coin.coin,
                         style = MaterialTheme.typography.titleMedium,
-                        color = BybitYellow
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (currentWalletPercentage != null && currentWalletPercentage > 0.01) {
+                        Text(
+                            text = "Mevcut: %.2f%%".format(currentWalletPercentage),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                // Target Percentage
+                if (isEditing) {
+                    OutlinedTextField(
+                        value = editValue,
+                        onValueChange = { editValue = it },
+                        modifier = Modifier.width(100.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        suffix = { Text("%") },
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                editValue.toDoubleOrNull()?.let { onPercentageChange(it) }
+                                isEditing = false
+                            }) {
+                                Icon(Icons.Default.Check, contentDescription = "Onayla")
+                            }
+                        }
+                    )
+                } else {
+                    Column(horizontalAlignment = Alignment.End) {
+                        TextButton(onClick = {
+                            editValue = coin.targetPercentage.toString()
+                            isEditing = true
+                        }) {
+                            Text(
+                                text = "%.2f%%".format(coin.targetPercentage),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = BybitYellow
+                            )
+                        }
+                        Text(
+                            text = "Hedef",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                // Remove button
+                IconButton(onClick = onRemove) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Kaldır",
+                        tint = BybitRed
                     )
                 }
             }
 
-            // Remove button
-            IconButton(onClick = onRemove) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = "Kaldır",
-                    tint = BybitRed
+            // Show difference between current and target
+            if (currentWalletPercentage != null && currentWalletPercentage > 0.01 && coin.targetPercentage > 0) {
+                val diff = currentWalletPercentage - coin.targetPercentage
+                val diffColor = when {
+                    kotlin.math.abs(diff) < 0.5 -> BybitGreen
+                    diff > 0 -> BybitRed  // Need to sell
+                    else -> BybitYellow   // Need to buy
+                }
+                val diffText = when {
+                    kotlin.math.abs(diff) < 0.5 -> "Dengede"
+                    diff > 0 -> "%.2f%% fazla (satılacak)".format(diff)
+                    else -> "%.2f%% eksik (alınacak)".format(-diff)
+                }
+                Text(
+                    text = diffText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = diffColor,
+                    modifier = Modifier.padding(start = 48.dp, top = 4.dp)
                 )
             }
         }
