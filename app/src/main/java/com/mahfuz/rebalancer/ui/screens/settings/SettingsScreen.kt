@@ -256,7 +256,7 @@ fun SettingsScreen(
                             }
                         )
 
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
 
                         SettingsItem(
                             icon = Icons.Default.Notifications,
@@ -318,7 +318,7 @@ fun SettingsScreen(
                             }
                         )
 
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                        Divider(modifier = Modifier.padding(horizontal = 16.dp))
 
                         SettingsItem(
                             icon = Icons.Default.DeleteForever,

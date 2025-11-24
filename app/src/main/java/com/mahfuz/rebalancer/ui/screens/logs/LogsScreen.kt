@@ -115,6 +115,7 @@ fun LogsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsList(
     logs: List<LogEntry>,
@@ -341,7 +342,7 @@ fun TradeItem(trade: TradeHistoryEntity) {
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-            HorizontalDivider()
+            Divider()
             Spacer(modifier = Modifier.height(8.dp))
 
             Row(

@@ -203,7 +203,7 @@ fun HomeScreen(
                             // Rebalancing toggle
                             if (uiState.serviceState == ServiceState.RUNNING) {
                                 Spacer(modifier = Modifier.height(16.dp))
-                                HorizontalDivider()
+                                Divider()
                                 Spacer(modifier = Modifier.height(16.dp))
 
                                 Row(

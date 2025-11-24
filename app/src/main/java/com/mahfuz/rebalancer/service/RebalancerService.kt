@@ -350,6 +350,7 @@ class RebalancerService : Service() {
         val eventId = portfolioRepository.recordRebalanceEvent(
             RebalanceEventEntity(
                 totalValueBefore = stateBefore.totalValueUsdt.toDouble(),
+                totalValueAfter = null,
                 trades = gson.toJson(trades.map { it.symbol }),
                 status = "PENDING"
             )
