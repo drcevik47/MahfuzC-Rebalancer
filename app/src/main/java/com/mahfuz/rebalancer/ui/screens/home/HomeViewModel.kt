@@ -93,6 +93,9 @@ class HomeViewModel @Inject constructor(
     }
 
     fun refreshPortfolio() {
+        // Re-check API credentials first
+        checkApiCredentials()
+
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
 
