@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bybit Rebalancer</string>
+    <string name="notification_channel_name">Rebalancer Service</string>
+    <string name="notification_channel_description">Portföy dengeleme servisi bildirimleri</string>
+</resources>
