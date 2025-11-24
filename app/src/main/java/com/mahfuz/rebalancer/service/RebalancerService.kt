@@ -312,8 +312,33 @@ class RebalancerService : Service() {
             val balances = balanceResult.getOrNull()!!
                 .associate { it.coin to (it.walletBalance.toBigDecimalOrNull() ?: BigDecimal.ZERO) }
 
-            // Build price map
-            val prices = priceCache.toMap()
+            // Build price map - use WebSocket cache with REST API fallback
+            val prices = priceCache.toMutableMap()
+
+            // Check if we need to fetch prices via REST API (fallback)
+            val missingPrices = config.coins.keys.filter { coin ->
+                coin != "USDT" && !prices.containsKey(coin)
+            }
+
+            if (missingPrices.isNotEmpty() || prices.isEmpty()) {
+                logger.info(AppLogger.TAG_REBALANCER, "Fetching prices via REST API for: ${missingPrices.joinToString()}")
+                val tickersResult = bybitRepository.getTickers()
+                if (tickersResult.isSuccess) {
+                    tickersResult.getOrNull()!!
+                        .filter { it.symbol.endsWith("USDT") }
+                        .forEach { ticker ->
+                            val coin = ticker.symbol.removeSuffix("USDT")
+                            ticker.lastPrice.toBigDecimalOrNull()?.let { price ->
+                                prices[coin] = price
+                                // Also update cache for future use
+                                priceCache[coin] = price
+                            }
+                        }
+                } else {
+                    logger.error(AppLogger.TAG_REBALANCER, "Failed to get tickers: ${tickersResult.exceptionOrNull()?.message}")
+                    return
+                }
+            }
 
             // Calculate portfolio state
             val portfolioState = rebalanceCalculator.calculatePortfolioState(
@@ -331,14 +356,36 @@ class RebalancerService : Service() {
             if (rebalanceCalculator.needsRebalancing(portfolioState, config.threshold)) {
                 logger.info(AppLogger.TAG_REBALANCER, "Rebalancing needed, calculating trades...")
 
+                // Log portfolio state for debugging
+                portfolioState.holdings.filter { it.targetPercentage > BigDecimal.ZERO }.forEach { holding ->
+                    logger.debug(
+                        AppLogger.TAG_REBALANCER,
+                        "${holding.coin}: current=${holding.currentPercentage}%, target=${holding.targetPercentage}%, deviation=${holding.deviation}%"
+                    )
+                }
+
                 val trades = rebalanceCalculator.calculateRebalanceTrades(
                     portfolioState = portfolioState,
                     tradingPairs = instrumentsCache
                 )
 
                 if (trades.isNotEmpty()) {
+                    // Log planned trades
+                    trades.forEach { trade ->
+                        logger.info(
+                            AppLogger.TAG_REBALANCER,
+                            "Planned trade: ${trade.action} ${trade.amount} ${trade.coin} (${trade.usdtValue} USDT)"
+                        )
+                    }
                     executeRebalance(trades, portfolioState)
+                } else {
+                    logger.info(
+                        AppLogger.TAG_REBALANCER,
+                        "No trades generated - amounts may be below minimum order limits"
+                    )
                 }
+            } else {
+                logger.debug(AppLogger.TAG_REBALANCER, "Portfolio within threshold, no rebalancing needed")
             }
 
         } catch (e: Exception) {
@@ -382,6 +429,10 @@ class RebalancerService : Service() {
                 tradeIds.add(tradeId)
 
                 // Execute trade
+                logger.debug(
+                    AppLogger.TAG_TRADE,
+                    "Executing order: ${trade.action} ${trade.symbol} qty=${trade.amount.toPlainString()}"
+                )
                 val result = bybitRepository.createOrder(
                     symbol = trade.symbol,
                     side = if (trade.action == TradeAction.BUY) "Buy" else "Sell",

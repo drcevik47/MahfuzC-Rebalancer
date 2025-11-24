@@ -144,19 +144,32 @@ class RebalanceCalculator(
 
             // Calculate quantity to sell
             var sellAmount = order.diff.divide(order.price, MATH_CONTEXT)
+            var skipTrade = false
 
             // Apply lot size filter if available
             pairInfo?.lotSizeFilter?.let { filter ->
                 val minQty = filter.minOrderQty?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+                val minAmt = filter.minOrderAmt?.toBigDecimalOrNull() ?: BigDecimal.ZERO
                 val basePrecision = filter.basePrecision?.toIntOrNull() ?: 8
 
-                if (sellAmount < minQty) return@let
-
-                // Round down to base precision
+                // Round down to base precision first
                 sellAmount = sellAmount.setScale(basePrecision, RoundingMode.DOWN)
+
+                // Check minimum quantity
+                if (sellAmount < minQty) {
+                    skipTrade = true
+                    return@let
+                }
+
+                // Check minimum order amount (USDT value)
+                val orderValue = sellAmount.multiply(order.price, MATH_CONTEXT)
+                if (orderValue < minAmt) {
+                    skipTrade = true
+                    return@let
+                }
             }
 
-            if (sellAmount > BigDecimal.ZERO) {
+            if (!skipTrade && sellAmount > BigDecimal.ZERO) {
                 trades.add(
                     RebalanceAction(
                         coin = order.coin,
@@ -182,19 +195,32 @@ class RebalanceCalculator(
             // Calculate quantity to buy (diff is negative, so negate it)
             val buyValueUsdt = order.diff.abs()
             var buyAmount = buyValueUsdt.divide(order.price, MATH_CONTEXT)
+            var skipTrade = false
 
             // Apply lot size filter if available
             pairInfo?.lotSizeFilter?.let { filter ->
                 val minQty = filter.minOrderQty?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+                val minAmt = filter.minOrderAmt?.toBigDecimalOrNull() ?: BigDecimal.ZERO
                 val basePrecision = filter.basePrecision?.toIntOrNull() ?: 8
 
-                if (buyAmount < minQty) return@let
-
-                // Round down to base precision
+                // Round down to base precision first
                 buyAmount = buyAmount.setScale(basePrecision, RoundingMode.DOWN)
+
+                // Check minimum quantity
+                if (buyAmount < minQty) {
+                    skipTrade = true
+                    return@let
+                }
+
+                // Check minimum order amount (USDT value)
+                val orderValue = buyAmount.multiply(order.price, MATH_CONTEXT)
+                if (orderValue < minAmt) {
+                    skipTrade = true
+                    return@let
+                }
             }
 
-            if (buyAmount > BigDecimal.ZERO) {
+            if (!skipTrade && buyAmount > BigDecimal.ZERO) {
                 trades.add(
                     RebalanceAction(
                         coin = order.coin,
