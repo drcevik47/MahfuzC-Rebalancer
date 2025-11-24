@@ -1,5 +1,6 @@
 package com.mahfuz.rebalancer.ui.screens.logs
 
+import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,7 +34,21 @@ fun LogsScreen(
     viewModel: LogsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showClearDialog by remember { mutableStateOf(false) }
+    var showShareDialog by remember { mutableStateOf(false) }
+
+    // Share function
+    fun shareText(text: String, title: String) {
+        val sendIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            putExtra(Intent.EXTRA_SUBJECT, title)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, "Paylaş")
+        context.startActivity(shareIntent)
+    }
 
     Scaffold(
         topBar = {
@@ -44,6 +60,9 @@ fun LogsScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showShareDialog = true }) {
+                        Icon(Icons.Default.Share, contentDescription = "Paylaş")
+                    }
                     IconButton(onClick = { showClearDialog = true }) {
                         Icon(Icons.Default.DeleteSweep, contentDescription = "Temizle")
                     }
@@ -108,6 +127,157 @@ fun LogsScreen(
             },
             dismissButton = {
                 OutlinedButton(onClick = { showClearDialog = false }) {
+                    Text("İptal")
+                }
+            }
+        )
+    }
+
+    // Share dialog
+    if (showShareDialog) {
+        AlertDialog(
+            onDismissRequest = { showShareDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = null,
+                        tint = BybitYellow,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("Kayıtları Paylaş")
+                }
+            },
+            text = {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Hangi kayıtları paylaşmak istiyorsunuz?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Share Logs Only
+                    OutlinedCard(
+                        onClick = {
+                            shareText(
+                                viewModel.generateLogsText(),
+                                "Bybit Rebalancer - Log Kayıtları"
+                            )
+                            showShareDialog = false
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.List,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Sadece Loglar",
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Text(
+                                    text = "${uiState.logs.size} log kaydı",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    // Share Trades Only
+                    OutlinedCard(
+                        onClick = {
+                            shareText(
+                                viewModel.generateTradesText(),
+                                "Bybit Rebalancer - İşlem Geçmişi"
+                            )
+                            showShareDialog = false
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.SwapHoriz,
+                                contentDescription = null,
+                                tint = BybitGreen
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Sadece İşlemler",
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                Text(
+                                    text = "${uiState.trades.size} işlem kaydı",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+
+                    // Share Full Report
+                    Card(
+                        onClick = {
+                            shareText(
+                                viewModel.generateFullReport(),
+                                "Bybit Rebalancer - Tam Rapor"
+                            )
+                            showShareDialog = false
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = BybitYellow.copy(alpha = 0.2f)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.Description,
+                                contentDescription = null,
+                                tint = BybitYellow
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "Tam Rapor",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Tüm loglar ve işlemler",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showShareDialog = false }) {
                     Text("İptal")
                 }
             }
