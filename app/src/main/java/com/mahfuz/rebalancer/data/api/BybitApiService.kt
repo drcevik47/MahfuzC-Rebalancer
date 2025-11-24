@@ -44,9 +44,10 @@ interface BybitApiService {
     ): Response<BybitResponse<WalletBalanceResult>>
 
     // Order - Private (requires authentication)
+    @Headers("Content-Type: application/json")
     @POST("/v5/order/create")
     suspend fun createOrder(
-        @Body order: OrderRequest,
+        @Body body: okhttp3.RequestBody,
         @Header("X-BAPI-API-KEY") apiKey: String,
         @Header("X-BAPI-TIMESTAMP") timestamp: String,
         @Header("X-BAPI-SIGN") sign: String,

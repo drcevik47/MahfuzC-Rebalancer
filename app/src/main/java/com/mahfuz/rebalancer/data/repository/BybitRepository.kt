@@ -138,14 +138,25 @@ class BybitRepository @Inject constructor(
             )
 
             val jsonBody = gson.toJson(orderRequest)
+
+            // Log the exact JSON being sent for debugging
+            android.util.Log.d("BybitRepository", "Order JSON: $jsonBody")
+
             val signed = BybitSignatureHelper.signPostRequest(
                 apiKey = apiKey,
                 apiSecret = apiSecret,
                 jsonBody = jsonBody
             )
 
+            // Use the same JSON string for both signature and request body
+            @Suppress("DEPRECATION")
+            val requestBody = okhttp3.RequestBody.create(
+                okhttp3.MediaType.parse("application/json; charset=utf-8"),
+                jsonBody
+            )
+
             val response = apiService.createOrder(
-                order = orderRequest,
+                body = requestBody,
                 apiKey = apiKey,
                 timestamp = signed.timestamp,
                 sign = signed.signature,
@@ -155,10 +166,23 @@ class BybitRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.retCode == 0) {
                 Result.success(response.body()!!.result!!)
             } else {
-                Result.failure(Exception(response.body()?.retMsg ?: "Unknown error"))
+                val body = response.body()
+                val errorMsg = buildString {
+                    append("Order failed: ")
+                    if (!response.isSuccessful) {
+                        append("HTTP ${response.code()} - ")
+                    }
+                    if (body != null) {
+                        append("retCode=${body.retCode}, retMsg=${body.retMsg}")
+                    } else {
+                        append("No response body")
+                    }
+                    append(" | Request: $symbol $side qty=$qty")
+                }
+                Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(Exception("Network error: ${e.message} | Request: $symbol $side qty=$qty"))
         }
     }
 
