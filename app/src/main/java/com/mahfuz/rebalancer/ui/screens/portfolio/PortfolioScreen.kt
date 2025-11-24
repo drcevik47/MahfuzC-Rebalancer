@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mahfuz.rebalancer.data.db.PortfolioCoinEntity
+import com.mahfuz.rebalancer.data.model.CoinBalance
 import com.mahfuz.rebalancer.ui.theme.BybitGreen
 import com.mahfuz.rebalancer.ui.theme.BybitRed
 import com.mahfuz.rebalancer.ui.theme.BybitYellow
@@ -169,6 +170,7 @@ fun PortfolioScreen(
             availableCoins = uiState.availableCoins.filter { coin ->
                 coin !in uiState.portfolioCoins.map { it.coin }
             },
+            walletCoins = uiState.walletCoins,
             onDismiss = { showAddCoinDialog = false },
             onAdd = { coin, percentage ->
                 viewModel.addCoin(coin, percentage)
@@ -203,6 +205,7 @@ fun PortfolioScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThresholdCard(
     threshold: Double,
@@ -242,11 +245,15 @@ fun ThresholdCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Slider with proper 0.01 step increments
             Slider(
                 value = threshold.toFloat(),
-                onValueChange = { onThresholdChange(it.toDouble()) },
+                onValueChange = {
+                    // Round to 2 decimal places for 0.01 precision
+                    val rounded = kotlin.math.round(it * 100) / 100.0
+                    onThresholdChange(rounded.coerceIn(0.01, 10.0))
+                },
                 valueRange = 0.01f..10f,
-                steps = 99,
                 colors = SliderDefaults.colors(
                     thumbColor = BybitYellow,
                     activeTrackColor = BybitYellow
@@ -259,6 +266,22 @@ fun ThresholdCard(
             ) {
                 Text("0.01%", style = MaterialTheme.typography.labelSmall)
                 Text("10%", style = MaterialTheme.typography.labelSmall)
+            }
+
+            // Quick select buttons for common thresholds
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(0.01, 0.05, 0.1, 0.5, 1.0, 5.0).forEach { value ->
+                    FilterChip(
+                        selected = kotlin.math.abs(threshold - value) < 0.001,
+                        onClick = { onThresholdChange(value) },
+                        label = { Text("${value}%") },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
     }
@@ -402,6 +425,7 @@ fun PortfolioCoinCard(
 @Composable
 fun AddCoinDialog(
     availableCoins: List<String>,
+    walletCoins: List<CoinBalance>,
     onDismiss: () -> Unit,
     onAdd: (String, Double) -> Unit
 ) {
@@ -409,6 +433,23 @@ fun AddCoinDialog(
     var percentage by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
+
+    // Calculate total wallet value for percentage calculation
+    val totalWalletValue = remember(walletCoins) {
+        walletCoins.sumOf { it.usdValue.toDoubleOrNull() ?: 0.0 }
+    }
+
+    // Create a map of coin -> wallet percentage
+    val walletPercentages = remember(walletCoins, totalWalletValue) {
+        if (totalWalletValue > 0) {
+            walletCoins.associate { coin ->
+                val usdValue = coin.usdValue.toDoubleOrNull() ?: 0.0
+                coin.coin to (usdValue / totalWalletValue * 100)
+            }
+        } else {
+            emptyMap()
+        }
+    }
 
     val filteredCoins = remember(searchQuery, availableCoins) {
         if (searchQuery.isBlank()) availableCoins
@@ -448,11 +489,29 @@ fun AddCoinDialog(
                         onDismissRequest = { expanded = false }
                     ) {
                         filteredCoins.take(10).forEach { coin ->
+                            val walletPct = walletPercentages[coin]
                             DropdownMenuItem(
-                                text = { Text(coin) },
+                                text = {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(coin)
+                                        if (walletPct != null && walletPct > 0.01) {
+                                            Text(
+                                                text = "(%.2f%%)".format(walletPct),
+                                                color = BybitYellow
+                                            )
+                                        }
+                                    }
+                                },
                                 onClick = {
                                     selectedCoin = coin
                                     searchQuery = coin
+                                    // Auto-fill with current wallet percentage if available
+                                    if (walletPct != null && walletPct > 0.01) {
+                                        percentage = "%.2f".format(walletPct)
+                                    }
                                     expanded = false
                                 }
                             )
@@ -468,7 +527,13 @@ fun AddCoinDialog(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     suffix = { Text("%") },
-                    singleLine = true
+                    singleLine = true,
+                    supportingText = {
+                        val walletPct = walletPercentages[selectedCoin]
+                        if (walletPct != null && walletPct > 0.01) {
+                            Text("Mevcut cüzdan oranı: %.2f%%".format(walletPct))
+                        }
+                    }
                 )
             }
         },
