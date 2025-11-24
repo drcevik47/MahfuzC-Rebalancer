@@ -1,66 +1,63 @@
 Executing tasks: [:app:assembleDebug] in project C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer
 
-Starting Gradle Daemon...
-Gradle Daemon started in 653 ms
-> Task :app:createDebugVariantModel
+> Task :app:createDebugVariantModel UP-TO-DATE
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :app:generateDebugResValues
-> Task :app:checkDebugAarMetadata
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
 > Task :app:mapDebugSourceSetPaths
-> Task :app:generateDebugResources
-> Task :app:packageDebugResources
-> Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug
+> Task :app:generateDebugResources UP-TO-DATE
 > Task :app:mergeDebugResources
+> Task :app:packageDebugResources
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
 > Task :app:parseDebugLocalResources
-> Task :app:processDebugMainManifest
-> Task :app:processDebugManifest
-Download https://repo.maven.apache.org/maven2/com/google/dagger/hilt-compiler/2.48/hilt-compiler-2.48.pom, took 72 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-spi/2.48/dagger-spi-2.48.pom, took 29 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-compiler/2.48/dagger-compiler-2.48.pom, took 47 ms
-Download https://dl.google.com/dl/android/maven2/androidx/room/room-compiler-processing/2.6.0/room-compiler-processing-2.6.0.pom, took 153 ms
-Download https://dl.google.com/dl/android/maven2/androidx/room/room-compiler-processing/2.6.0/room-compiler-processing-2.6.0.module, took 253 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-producers/2.48/dagger-producers-2.48.pom, took 26 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-producers/2.48/dagger-producers-2.48.jar, took 70 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/hilt-compiler/2.48/hilt-compiler-2.48.jar, took 80 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-compiler/2.48/dagger-compiler-2.48.jar, took 232 ms
-Download https://repo.maven.apache.org/maven2/com/google/dagger/dagger-spi/2.48/dagger-spi-2.48.jar, took 552 ms
-> Task :app:mergeDebugShaders
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:javaPreCompileDebug
-> Task :app:mergeDebugAssets
-> Task :app:compressDebugAssets
-> Task :app:desugarDebugFileDependencies
-> Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
-> Task :app:mergeLibDexDebug
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:processDebugManifestForPackage
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:processDebugResources
+> Task :app:kspDebugKotlin
 
-> Task :app:processDebugResources FAILED
-AGPBI: {"kind":"error","text":"Android resource linking failed","sources":[{"file":"C:\\Users\\drcev\\OneDrive\\Desktop\\balancer\\MahfuzC-Rebalancer\\app\\src\\main\\AndroidManifest.xml","position":{"startLine":23,"startColumn":4,"endLine":78,"endColumn":18}}],"original":"ERROR: C:\\Users\\drcev\\OneDrive\\Desktop\\balancer\\MahfuzC-Rebalancer\\app\\src\\main\\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher (aka com.mahfuz.rebalancer:mipmap/ic_launcher) not found.\n    ","tool":"AAPT"}
-AGPBI: {"kind":"error","text":"Android resource linking failed","sources":[{"file":"C:\\Users\\drcev\\OneDrive\\Desktop\\balancer\\MahfuzC-Rebalancer\\app\\src\\main\\AndroidManifest.xml","position":{"startLine":23,"startColumn":4,"endLine":78,"endColumn":18}}],"original":"ERROR: C:\\Users\\drcev\\OneDrive\\Desktop\\balancer\\MahfuzC-Rebalancer\\app\\src\\main\\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher_round (aka com.mahfuz.rebalancer:mipmap/ic_launcher_round) not found.\n    ","tool":"AAPT"}
-
-> Task :app:mergeExtDexDebug
+> Task :app:compileDebugKotlin FAILED
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/service/RebalancerService.kt:354:17 No value passed for parameter 'totalValueAfter'
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/home/HomeScreen.kt:206:33 Unresolved reference: HorizontalDivider
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:133:13 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:138:13 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:142:26 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:142:45 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:146:13 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:150:26 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:150:45 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:154:13 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:159:13 This material API is experimental and is likely to change or to be removed in the future.
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/logs/LogsScreen.kt:344:13 Unresolved reference: HorizontalDivider
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/settings/SettingsScreen.kt:259:25 Unresolved reference: HorizontalDivider
+e: file:///C:/Users/drcev/OneDrive/Desktop/balancer/MahfuzC-Rebalancer/app/src/main/java/com/mahfuz/rebalancer/ui/screens/settings/SettingsScreen.kt:321:25 Unresolved reference: HorizontalDivider
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:processDebugResources'.
-> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
-   > Android resource linking failed
-     ERROR: C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer\app\src\main\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher (aka com.mahfuz.rebalancer:mipmap/ic_launcher) not found.
-         
-     ERROR: C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer\app\src\main\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher_round (aka com.mahfuz.rebalancer:mipmap/ic_launcher_round) not found.
-         
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
 * Try:
 > Run with --info or --debug option to get more log output.
@@ -68,7 +65,7 @@ Execution failed for task ':app:processDebugResources'.
 > Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:processDebugResources'.
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:149)
 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:147)
@@ -99,7 +96,7 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:pro
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
 	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:283)
 	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
 	at org.gradle.internal.Factories$1.create(Factories.java:31)
@@ -174,7 +171,7 @@ Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionExcept
 	at org.gradle.internal.execution.steps.CaptureStateBeforeExecutionStep.execute(CaptureStateBeforeExecutionStep.java:71)
 	at org.gradle.internal.execution.steps.CaptureStateBeforeExecutionStep.execute(CaptureStateBeforeExecutionStep.java:45)
 	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.executeWithNonEmptySources(SkipEmptyWorkStep.java:177)
-	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.execute(SkipEmptyWorkStep.java:81)
+	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.execute(SkipEmptyWorkStep.java:86)
 	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.execute(SkipEmptyWorkStep.java:53)
 	at org.gradle.internal.execution.steps.RemoveUntrackedExecutionStateStep.execute(RemoveUntrackedExecutionStateStep.java:32)
 	at org.gradle.internal.execution.steps.RemoveUntrackedExecutionStateStep.execute(RemoveUntrackedExecutionStateStep.java:21)
@@ -220,20 +217,10 @@ Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionExcept
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: com.android.builder.internal.aapt.v2.Aapt2Exception: Android resource linking failed
-ERROR: C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer\app\src\main\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher (aka com.mahfuz.rebalancer:mipmap/ic_launcher) not found.
-    
-ERROR: C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer\app\src\main\AndroidManifest.xml:24:5-79:19: AAPT: error: resource mipmap/ic_launcher_round (aka com.mahfuz.rebalancer:mipmap/ic_launcher_round) not found.
-    
-	at com.android.builder.internal.aapt.v2.Aapt2Exception$Companion.create(Aapt2Exception.kt:45)
-	at com.android.builder.internal.aapt.v2.Aapt2Exception$Companion.create$default(Aapt2Exception.kt:33)
-	at com.android.build.gradle.internal.res.Aapt2ErrorUtils.rewriteException(Aapt2ErrorUtils.kt:262)
-	at com.android.build.gradle.internal.res.Aapt2ErrorUtils.rewriteLinkException(Aapt2ErrorUtils.kt:133)
-	at com.android.build.gradle.internal.res.Aapt2ProcessResourcesRunnableKt.processResources(Aapt2ProcessResourcesRunnable.kt:76)
-	at com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$Companion.invokeAaptForSplit(LinkApplicationAndroidResourcesTask.kt:940)
-	at com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$Companion.access$invokeAaptForSplit(LinkApplicationAndroidResourcesTask.kt:795)
-	at com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction.run(LinkApplicationAndroidResourcesTask.kt:431)
-	at com.android.build.gradle.internal.profile.ProfileAwareWorkAction.execute(ProfileAwareWorkAction.kt:74)
+Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:20)
+	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:141)
+	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:73)
 	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
@@ -264,5 +251,5 @@ ERROR: C:\Users\drcev\OneDrive\Desktop\balancer\MahfuzC-Rebalancer\app\src\main\
 	... 2 more
 
 
-BUİLD FAILED in 35s
-26 actionable tasks: 26 executed
+BUİLD FAILED in 12s
+28 actionable tasks: 8 executed, 20 up-to-date
