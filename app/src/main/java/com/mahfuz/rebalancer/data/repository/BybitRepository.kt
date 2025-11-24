@@ -6,6 +6,8 @@ import com.mahfuz.rebalancer.data.api.BybitSignatureHelper
 import com.mahfuz.rebalancer.data.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -149,11 +151,8 @@ class BybitRepository @Inject constructor(
             )
 
             // Use the same JSON string for both signature and request body
-            @Suppress("DEPRECATION")
-            val requestBody = okhttp3.RequestBody.create(
-                okhttp3.MediaType.parse("application/json; charset=utf-8"),
-                jsonBody
-            )
+            val mediaType = "application/json; charset=utf-8".toMediaType()
+            val requestBody = jsonBody.toRequestBody(mediaType)
 
             val response = apiService.createOrder(
                 body = requestBody,
