@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bybit Rebalancer</string>
+    <string name="notification_channel_name">Rebalancer Service</string>
+    <string name="notification_channel_description">Portföy dengeleme servisi bildirimleri</string>
+    <string name="notification_title">Portföy Takibi Aktif</string>
+    <string name="notification_text">Portföyünüz izleniyor ve gerektiğinde dengelenecek</string>
+    <string name="stop_service">Durdur</string>
+    <string name="start_service">Başlat</string>
+
+    <!-- API Settings -->
+    <string name="api_key">API Key</string>
+    <string name="api_secret">API Secret</string>
+    <string name="save_settings">Ayarları Kaydet</string>
+    <string name="test_connection">Bağlantıyı Test Et</string>
+
+    <!-- Portfolio -->
+    <string name="portfolio">Portföy</string>
+    <string name="add_coin">Coin Ekle</string>
+    <string name="remove_coin">Coin Kaldır</string>
+    <string name="target_percentage">Hedef Yüzde</string>
+    <string name="current_percentage">Mevcut Yüzde</string>
+    <string name="rebalance_threshold">Dengeleme Eşiği</string>
+
+    <!-- Settings -->
+    <string name="settings">Ayarlar</string>
+    <string name="rebalance_sensitivity">Hassasiyet (%)</string>
+
+    <!-- Logs -->
+    <string name="logs">Kayıtlar</string>
+    <string name="clear_logs">Kayıtları Temizle</string>
+    <string name="export_logs">Kayıtları Dışa Aktar</string>
+
+    <!-- Status -->
+    <string name="connected">Bağlı</string>
+    <string name="disconnected">Bağlantı Kesildi</string>
+    <string name="rebalancing">Dengeleniyor...</string>
+    <string name="idle">Beklemede</string>
+</resources>

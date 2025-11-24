@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bybit Brand Colors -->
+    <color name="bybit_yellow">#F7A600</color>
+    <color name="bybit_yellow_light">#FFD54F</color>
+    <color name="bybit_dark">#0D1117</color>
+    <color name="bybit_dark_surface">#161B22</color>
+    <color name="bybit_dark_card">#21262D</color>
+
+    <!-- Status Colors -->
+    <color name="profit_green">#00C853</color>
+    <color name="loss_red">#FF5252</color>
+    <color name="warning_orange">#FF9800</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8B949E</color>
+    <color name="text_disabled">#484F58</color>
+
+    <!-- Border Colors -->
+    <color name="border_color">#30363D</color>
+</resources>
