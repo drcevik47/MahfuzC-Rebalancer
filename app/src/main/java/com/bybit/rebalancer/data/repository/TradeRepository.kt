@@ -157,8 +157,8 @@ class TradeRepository @Inject constructor(
 
     /**
      * Tek bir trade'i gerçekleştir
-     * BUY: quoteCoin (USDT) cinsinden miktar gönderilir
-     * SELL: baseCoin (coin) cinsinden miktar gönderilir
+     * BUY: marketUnit="quoteCoin" + USDT miktarı gönderilir
+     * SELL: marketUnit=null + coin miktarı gönderilir
      */
     suspend fun executeTrade(trade: RebalanceTrade): Result<TradeLog> {
         return try {
@@ -168,16 +168,16 @@ class TradeRepository @Inject constructor(
 
             val orderLinkId = "rebal_${UUID.randomUUID().toString().take(8)}"
 
-            // BUY için USDT miktarı (quoteCoin), SELL için coin miktarı (baseCoin) kullan
             val isBuy = trade.action == TradeAction.BUY
-            val marketUnit = if (isBuy) "quoteCoin" else "baseCoin"
+
+            // BUY: USDT miktarı + marketUnit="quoteCoin"
+            // SELL: Coin miktarı + marketUnit=null (set edilmez)
             val qty = if (isBuy) {
-                // BUY: USDT miktarını gönder (2 decimal)
                 formatUsdtAmount(trade.estimatedUsdtAmount)
             } else {
-                // SELL: Coin miktarını gönder
                 formatQuantity(trade.quantity, trade.symbol)
             }
+            val marketUnit = if (isBuy) "quoteCoin" else null
 
             val orderRequest = OrderRequest(
                 category = "spot",
@@ -190,7 +190,7 @@ class TradeRepository @Inject constructor(
             )
 
             logRepository.logInfo("Trade",
-                "Order gönderiliyor: ${orderRequest.side} ${trade.symbol} qty=$qty ($marketUnit)")
+                "Order gönderiliyor: ${orderRequest.side} ${trade.symbol} qty=$qty (marketUnit=${marketUnit ?: "null"})")
 
             val response = apiService.createOrder(orderRequest)
 
