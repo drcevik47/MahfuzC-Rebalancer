@@ -306,14 +306,75 @@ class TradeRepository @Inject constructor(
 
     /**
      * Coin miktarını uygun formata çevir (SELL için baseCoin)
+     * Coin-specific precision kullanır
      */
     private fun formatQuantity(quantity: Double, symbol: String): String {
-        val instrument = instrumentsCache[symbol]
-        val precision = instrument?.lotSizeFilter?.basePrecision?.toIntOrNull() ?: 8
+        // Coin adını symbol'den çıkar (BTCUSDT -> BTC)
+        val coin = symbol.removeSuffix("USDT")
+        val precision = getCoinPrecision(coin)
         return BigDecimal(quantity)
             .setScale(precision, RoundingMode.DOWN)
             .stripTrailingZeros()
             .toPlainString()
+    }
+
+    /**
+     * Coin için uygun ondalık hassasiyeti döndür
+     */
+    private fun getCoinPrecision(coin: String): Int {
+        return when (coin) {
+            "BTC" -> 6
+            "ETH" -> 5
+            "BNB" -> 5
+            "SOL" -> 3
+            "XRP" -> 1
+            "DOGE" -> 0
+            "ADA" -> 1
+            "AVAX" -> 2
+            "DOT" -> 2
+            "MATIC" -> 1
+            "LINK" -> 2
+            "UNI" -> 2
+            "ATOM" -> 2
+            "LTC" -> 5
+            "ETC" -> 2
+            "XLM" -> 0
+            "ALGO" -> 0
+            "VET" -> 0
+            "FIL" -> 2
+            "NEAR" -> 2
+            "APT" -> 2
+            "ARB" -> 1
+            "OP" -> 1
+            "INJ" -> 2
+            "SUI" -> 1
+            "SEI" -> 0
+            "TIA" -> 2
+            "JUP" -> 0
+            "WIF" -> 0
+            "PEPE" -> 0
+            "SHIB" -> 0
+            "FLOKI" -> 0
+            "BONK" -> 0
+            "WLD" -> 1
+            "STRK" -> 1
+            "MNT" -> 1
+            "MANTA" -> 1
+            "DYM" -> 2
+            "PYTH" -> 0
+            "JTO" -> 2
+            "ORDI" -> 2
+            "BLUR" -> 0
+            "MEME" -> 0
+            "RATS" -> 0
+            "SATS" -> 0
+            "1000SATS" -> 0
+            "PIXEL" -> 1
+            "PORTAL" -> 1
+            "AEVO" -> 2
+            "PUMP" -> 0
+            else -> 2  // Varsayılan: 2 ondalık
+        }
     }
 
     /**
