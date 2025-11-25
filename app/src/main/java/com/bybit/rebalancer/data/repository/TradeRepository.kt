@@ -157,6 +157,8 @@ class TradeRepository @Inject constructor(
 
     /**
      * Tek bir trade'i gerçekleştir
+     * BUY: quoteCoin (USDT) cinsinden miktar gönderilir
+     * SELL: baseCoin (coin) cinsinden miktar gönderilir
      */
     suspend fun executeTrade(trade: RebalanceTrade): Result<TradeLog> {
         return try {
@@ -166,18 +168,29 @@ class TradeRepository @Inject constructor(
 
             val orderLinkId = "rebal_${UUID.randomUUID().toString().take(8)}"
 
+            // BUY için USDT miktarı (quoteCoin), SELL için coin miktarı (baseCoin) kullan
+            val isBuy = trade.action == TradeAction.BUY
+            val marketUnit = if (isBuy) "quoteCoin" else "baseCoin"
+            val qty = if (isBuy) {
+                // BUY: USDT miktarını gönder (2 decimal)
+                formatUsdtAmount(trade.estimatedUsdtAmount)
+            } else {
+                // SELL: Coin miktarını gönder
+                formatQuantity(trade.quantity, trade.symbol)
+            }
+
             val orderRequest = OrderRequest(
                 category = "spot",
                 symbol = trade.symbol,
-                side = if (trade.action == TradeAction.BUY) "Buy" else "Sell",
+                side = if (isBuy) "Buy" else "Sell",
                 orderType = "Market",
-                qty = formatQuantity(trade.quantity, trade.symbol),
-                marketUnit = "baseCoin",
+                qty = qty,
+                marketUnit = marketUnit,
                 orderLinkId = orderLinkId
             )
 
             logRepository.logInfo("Trade",
-                "Order gönderiliyor: ${orderRequest.side} ${trade.symbol} ${orderRequest.qty}")
+                "Order gönderiliyor: ${orderRequest.side} ${trade.symbol} qty=$qty ($marketUnit)")
 
             val response = apiService.createOrder(orderRequest)
 
@@ -292,13 +305,23 @@ class TradeRepository @Inject constructor(
     }
 
     /**
-     * Miktarı uygun formata çevir
+     * Coin miktarını uygun formata çevir (SELL için baseCoin)
      */
     private fun formatQuantity(quantity: Double, symbol: String): String {
         val instrument = instrumentsCache[symbol]
         val precision = instrument?.lotSizeFilter?.basePrecision?.toIntOrNull() ?: 8
         return BigDecimal(quantity)
             .setScale(precision, RoundingMode.DOWN)
+            .stripTrailingZeros()
+            .toPlainString()
+    }
+
+    /**
+     * USDT miktarını uygun formata çevir (BUY için quoteCoin)
+     */
+    private fun formatUsdtAmount(amount: Double): String {
+        return BigDecimal(amount)
+            .setScale(2, RoundingMode.DOWN)
             .stripTrailingZeros()
             .toPlainString()
     }
